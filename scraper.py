@@ -6,7 +6,6 @@ from datetime import datetime
 
 # --- CONFIGURATION ---
 OUTPUT_FILE = 'lore_data.json'
-# We use a real browser string to avoid instant blocking
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
 TARGET_SUBREDDITS = ['EldenRingLoreTalk', 'eldenringlore']
@@ -37,11 +36,11 @@ def fetch_json(url, params=None):
 
 def get_comments(permalink):
     """
-    Fetches the specific post JSON to get comments.
-    Limit: Top 2 comments to save bandwidth/space.
+    Fetches the specific post JSON to get full comments.
+    Limit: Top 3 comments to keep file size reasonable.
     """
     url = f"https://www.reddit.com{permalink}.json"
-    data = fetch_json(url, {'sort': 'top', 'limit': 3})
+    data = fetch_json(url, {'sort': 'top', 'limit': 5})
     
     comments = []
     if data and len(data) > 1:
@@ -53,12 +52,12 @@ def get_comments(permalink):
             body = c_data.get('body', '')
             
             # Filter out bots and short garbage
-            if body and c_data.get('score', 0) > 5 and len(body) > 50 and "I am a bot" not in body:
+            if body and c_data.get('score', 0) > 5 and len(body) > 30 and "I am a bot" not in body:
                 comments.append({
                     "body": body,
                     "score": c_data.get('score', 0)
                 })
-                if len(comments) >= 1: break # Just get the best one
+                if len(comments) >= 3: break # Limit to top 3 insights
                 
     return comments
 
@@ -73,14 +72,14 @@ def scrape_and_save():
     all_posts = []
     seen_ids = set()
 
-    print(f"--- Starting No-API Scrape (Deep Mode) ---")
+    print(f"--- Starting Deep Scrape (No-API Mode) ---")
 
     for sub in TARGET_SUBREDDITS:
         print(f"Scanning r/{sub}...")
         
-        # Get Top Posts
+        # Get Top Posts (Limited to prevent long runtimes)
         url = f"https://www.reddit.com/r/{sub}/top.json"
-        data = fetch_json(url, {'t': 'month', 'limit': 15}) # Low limit to avoid 429 on comments
+        data = fetch_json(url, {'t': 'month', 'limit': 50}) 
         
         if data:
             posts = data.get('data', {}).get('children', [])
@@ -89,11 +88,13 @@ def scrape_and_save():
                 p_data = post['data']
                 if p_data['id'] in seen_ids or p_data.get('stickied'): continue
                 
-                print(f"  Processing {i+1}/{len(posts)}: {p_data['title'][:40]}...")
+                print(f"  [{i+1}/{len(posts)}] Fetching insights: {p_data['title'][:40]}...")
                 
                 # Fetch Comments (The slow part)
                 comments = get_comments(p_data['permalink'])
-                time.sleep(2) # Polite delay between posts
+                
+                # Sleep to be polite
+                time.sleep(2) 
 
                 post_entry = {
                     "title": p_data['title'],
@@ -110,7 +111,7 @@ def scrape_and_save():
 
     # --- CRITICAL SAFETY CHECK ---
     if len(all_posts) == 0:
-        print("!! ERROR: No posts found. Reddit blocked the request.")
+        print("!! ERROR: No posts found. Reddit blocked the request or API is down.")
         print("!! ABORTING: Existing data protected.")
         return 
 
@@ -118,7 +119,7 @@ def scrape_and_save():
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(all_posts, f, indent=2)
     
-    print(f"Done! Saved {len(all_posts)} posts with insights to '{OUTPUT_FILE}'.")
+    print(f"Done! Saved {len(all_posts)} scrolls with insights to '{OUTPUT_FILE}'.")
 
 if __name__ == "__main__":
     scrape_and_save()
