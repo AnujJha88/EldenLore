@@ -96,6 +96,17 @@ def scrape_and_save():
                 # Sleep to be polite
                 time.sleep(2) 
 
+                # Extract image URL if available
+                image_url = None
+                if p_data.get('post_hint') == 'image':
+                    image_url = p_data.get('url')
+                elif 'preview' in p_data and 'images' in p_data['preview']:
+                    # Get the highest resolution preview image
+                    try:
+                        image_url = p_data['preview']['images'][0]['source']['url'].replace('&amp;', '&')
+                    except (KeyError, IndexError):
+                        pass
+
                 post_entry = {
                     "title": p_data['title'],
                     "url": p_data['url'],
@@ -104,6 +115,7 @@ def scrape_and_save():
                     "body": p_data.get('selftext', ''),
                     "category": determine_category(p_data['title'] + " " + p_data.get('selftext', '')),
                     "scraped_at": datetime.now().isoformat(),
+                    "image_url": image_url,
                     "comments": comments
                 }
                 all_posts.append(post_entry)

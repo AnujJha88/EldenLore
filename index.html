@@ -357,6 +357,152 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 0.8; }
         }
+
+        /* Battle-worn texture */
+        .battle-worn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(45deg, transparent 48%, rgba(139, 69, 19, 0.03) 49%, rgba(139, 69, 19, 0.03) 51%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(139, 69, 19, 0.03) 49%, rgba(139, 69, 19, 0.03) 51%, transparent 52%);
+            background-size: 8px 8px;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Ember sparks on hover */
+        @keyframes spark {
+            0% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(0); 
+                opacity: 0; 
+            }
+        }
+
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ff6b35;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 12px #ff6b35, 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        /* Bloodstain marker for high scores */
+        .bloodstain {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.9) 0%, rgba(139, 0, 0, 0.7) 40%, rgba(80, 0, 0, 0.5) 70%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(3px);
+            animation: bloodstain-pulse 2s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .bloodstain::after {
+            content: '💀';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            filter: blur(0) grayscale(1) brightness(0.3) sepia(1) hue-rotate(-50deg) saturate(5);
+            opacity: 0.9;
+        }
+
+        @keyframes bloodstain-pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        /* Sword divider */
+        .sword-divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .sword-divider::before,
+        .sword-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #C9A959, transparent);
+        }
+
+        .sword-divider::before { left: 0; }
+        .sword-divider::after { right: 0; }
+
+        .sword-divider span {
+            display: inline-block;
+            padding: 0 1rem;
+            color: #C9A959;
+            font-size: 1.2rem;
+        }
+
+        /* Health bar style for scores */
+        .score-bar {
+            position: relative;
+            width: 100%;
+            height: 4px;
+            background: rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B0000 0%, #C9A959 50%, #FFD700 100%);
+            box-shadow: 0 0 10px rgba(201, 169, 89, 0.6);
+            transition: width 1s ease-out;
+        }
+
+        /* Cracked border effect */
+        .cracked-border {
+            position: relative;
+        }
+
+        .cracked-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(201, 169, 89, 0.1) 31%, 
+                transparent 32%,
+                transparent 48%,
+                rgba(201, 169, 89, 0.1) 49%,
+                transparent 50%);
+            background-size: 20px 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cracked-border:hover::before {
+            opacity: 1;
+        }
+
+        /* War banner flag effect */
+        @keyframes banner-wave {
+            0%, 100% { transform: skewX(0deg); }
+            25% { transform: skewX(1deg); }
+            75% { transform: skewX(-1deg); }
+        }
+
+        .war-banner {
+            animation: banner-wave 4s ease-in-out infinite;
+        }
     </style>
 </head>
 
@@ -372,14 +518,14 @@
     <div class="fog" style="top: 85%; left: -150%; animation: fog-drift 38s linear infinite 15s; opacity: 0.8;"></div>
 
     <header
-        class="w-full max-w-7xl p-6 md:p-10 border-b ornate-border flex flex-col md:flex-row justify-between items-center sticky top-0 z-40 backdrop-blur-md parchment-overlay relative"
+        class="w-full max-w-7xl p-6 md:p-10 border-b ornate-border flex flex-col md:flex-row justify-between items-center sticky top-0 z-40 backdrop-blur-md parchment-overlay relative war-banner"
         style="background: rgba(10, 8, 6, 0.95);">
         <div class="grace-glow"></div>
     <div class="mb-4 md:mb-0 text-center md:text-left relative">
-        <div class="absolute -top-2 left-0 text-[#C9A959] opacity-20 text-4xl">◈</div>
+        <div class="absolute -top-2 left-0 text-[#C9A959] opacity-20 text-4xl">⚔️</div>
         <h1 class="text-3xl md:text-5xl font-bold gold-text tracking-tight relative">The Great Archives</h1>
-        <p class="text-zinc-500 text-sm mt-2 font-mono italic">Curated Knowledge from the Lands Between</p>
-        <div class="absolute -bottom-2 right-0 text-[#C9A959] opacity-20 text-4xl">◈</div>
+        <p class="text-zinc-500 text-sm mt-2 font-mono italic">⚔️ Curated Knowledge from the Lands Between ⚔️</p>
+        <div class="absolute -bottom-2 right-0 text-[#C9A959] opacity-20 text-4xl">🛡️</div>
     </div>
     <div class="text-center md:text-right">
         <div class="inline-block px-4 py-2 border border-[#C9A959]/30 bg-black/40 relative"
@@ -425,47 +571,50 @@
         <div id="modal-content"
             class="bg-[#09090b] border-2 border-[#C9A959] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl relative parchment-overlay"
             style="clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px); box-shadow: 0 0 60px rgba(201, 169, 89, 0.4), inset 0 0 40px rgba(0,0,0,0.8);"
-            onclick="event.stopPropagation()"></div>
+            onclick="event.stopPropagation()">
 
-        <button onclick="closeModal()" class="absolute top-6 right-6 text-zinc-500 hover:text-[#C9A959] z-10 transition-all duration-300 hover:rotate-90 p-2 border border-zinc-800 hover:border-[#C9A959] bg-black/60" style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-zinc-500 hover:text-[#C9A959] z-10 transition-all duration-300 hover:rotate-90 p-2 border border-zinc-800 hover:border-[#C9A959] bg-black/60" style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
 
-        <div class="p-8 border-b ornate-border bg-[#121214] relative">
-            <div class="absolute top-4 left-4 text-[#C9A959] opacity-20 text-2xl">❖</div>
-            <div class="absolute top-4 right-4 text-[#C9A959] opacity-20 text-2xl">❖</div>
-            <div class="flex gap-3 mb-3">
-                <span id="m-category"
-                    class="text-[10px] font-bold text-black bg-[#C9A959] px-3 py-1 uppercase tracking-wider"
-                    style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">LORE</span>
-                <span id="m-score" class="text-[10px] text-zinc-500 font-mono py-1">⬆ 0</span>
-            </div>
-            <h2 id="m-title" class="text-2xl md:text-3xl souls-font text-zinc-100 leading-tight gold-text">Title Goes
-                Here</h2>
-        </div>
-
-        <div class="p-8 overflow-y-auto modal-scroll space-y-8">
-            <div id="m-body" class="text-zinc-300 text-base leading-relaxed whitespace-pre-wrap font-light"></div>
-
-            <div class="border-t ornate-border pt-8 relative">
-                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[#C9A959] text-xl opacity-40">✦
+            <div class="p-8 border-b ornate-border bg-[#121214] relative">
+                <div class="absolute top-4 left-4 text-[#C9A959] opacity-20 text-2xl">❖</div>
+                <div class="absolute top-4 right-4 text-[#C9A959] opacity-20 text-2xl">❖</div>
+                <div class="flex gap-3 mb-3">
+                    <span id="m-category"
+                        class="text-[10px] font-bold text-black bg-[#C9A959] px-3 py-1 uppercase tracking-wider"
+                        style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">LORE</span>
+                    <span id="m-score" class="text-[10px] text-zinc-500 font-mono py-1">⬆ 0</span>
                 </div>
-                <h3 class="text-[#C9A959] souls-font text-lg mb-6 text-center">Scholars' Insights</h3>
-                <div id="m-comments" class="space-y-6"></div>
+                <h2 id="m-title" class="text-2xl md:text-3xl souls-font text-zinc-100 leading-tight gold-text">Title Goes
+                    Here</h2>
+            </div>
+
+            <div class="p-8 overflow-y-auto modal-scroll space-y-8">
+                <div id="m-image" class="mb-6"></div>
+                <div id="m-body" class="text-zinc-300 text-base leading-relaxed whitespace-pre-wrap font-light"></div>
+
+                <div class="sword-divider">
+                    <span>⚔️</span>
+                </div>
+
+                <div class="pt-4 relative">
+                    <h3 class="text-[#C9A959] souls-font text-lg mb-6 text-center">Scholars' Insights</h3>
+                    <div id="m-comments" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t ornate-border bg-[#121214] text-center relative">
+                <div class="absolute bottom-2 left-2 text-[#C9A959] opacity-20 text-xl">◆</div>
+                <a id="m-link" href="#" target="_blank"
+                    class="text-xs text-zinc-500 hover:text-[#C9A959] uppercase tracking-widest transition-colors souls-font">
+                    View Original Scroll on Reddit ↗
+                </a>
+                <div class="absolute bottom-2 right-2 text-[#C9A959] opacity-20 text-xl">◆</div>
             </div>
         </div>
-
-        <div class="p-4 border-t ornate-border bg-[#121214] text-center relative">
-            <div class="absolute bottom-2 left-2 text-[#C9A959] opacity-20 text-xl">◆</div>
-            <a id="m-link" href="#" target="_blank"
-                class="text-xs text-zinc-500 hover:text-[#C9A959] uppercase tracking-widest transition-colors souls-font">
-                View Original Scroll on Reddit ↗
-            </a>
-            <div class="absolute bottom-2 right-2 text-[#C9A959] opacity-20 text-xl">◆</div>
-        </div>
-    </div>
     </div>
 
     <script>
@@ -527,17 +676,45 @@
                 const originalIndex = allData.indexOf(post);
                 const summary = (post.body || '').slice(0, 200).replace(/\n/g, ' ') + "...";
 
+                const scorePercent = Math.min((post.score / 1000) * 100, 100);
+                const isHighScore = post.score > 500;
+                const categoryIcons = {
+                    'Lore': '⚔️',
+                    'Theory': '🛡️',
+                    'Discussion': '🗡️',
+                    'Question': '🏹',
+                    'All': '⚜️'
+                };
+                const icon = categoryIcons[post.category] || '⚔️';
+                const hasImage = post.url && post.url !== 'None';
+                const imagePreview = hasImage ? `
+                    <div class="mb-3 overflow-hidden border border-zinc-800 relative" style="height: 150px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);">
+                        <img src="${post.image_url}" alt="" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300" onerror="this.parentElement.style.display='none';" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-2 right-2 text-[#C9A959] text-xs">🖼️</div>
+                    </div>
+                ` : '';
+
                 return `
-                <div class="card border-2 border-zinc-800 p-6 flex flex-col h-full transition-all duration-300 relative group cursor-pointer parchment-overlay" onclick="openModal(${originalIndex})" style="animation: card-entrance 0.6s ease-out ${0.05 * (index + 1)}s backwards;">
+                <div class="card border-2 border-zinc-800 p-6 flex flex-col h-full transition-all duration-300 relative group cursor-pointer parchment-overlay battle-worn cracked-border" onclick="openModal(${originalIndex})" style="animation: card-entrance 0.6s ease-out ${0.05 * (index + 1)}s backwards;">
+                    ${isHighScore ? '<div class="bloodstain"></div>' : ''}
                     <div class="flex justify-between items-start mb-4">
-                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider border border-zinc-800 px-2 py-1 bg-black/60" style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">${post.category}</span>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider border border-zinc-800 px-2 py-1 bg-black/60" style="clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);">${icon} ${post.category}</span>
                         <span class="text-[10px] text-[#C9A959]/60 font-mono">⬆ ${post.score}</span>
                     </div>
+                    <div class="score-bar mb-3">
+                        <div class="score-bar-fill" style="width: ${scorePercent}%;"></div>
+                    </div>
+                    ${imagePreview}
                     <h2 class="text-lg souls-font text-zinc-200 mb-3 leading-snug group-hover:text-[#C9A959] transition-colors">${post.title}</h2>
                     <p class="text-zinc-400 text-sm leading-relaxed mb-6 font-light border-l-2 border-[#C9A959]/30 pl-3">${summary}</p>
                     <div class="mt-auto pt-4 border-t ornate-border flex justify-between items-center">
-                        <span class="text-[10px] text-zinc-600 uppercase tracking-widest souls-font">Read Full Scroll</span>
-                        <span class="text-[#C9A959] group-hover:translate-x-1 transition-transform">→</span>
+                        <span class="text-[10px] text-zinc-600 uppercase tracking-widest souls-font flex items-center gap-2">
+                            <span class="text-[#C9A959] text-sm">⚔️</span>
+                            Read Full Scroll
+                            <span class="text-[#C9A959] text-sm">⚔️</span>
+                        </span>
+                        <span class="text-[#C9A959] group-hover:translate-x-2 transition-transform text-lg">→</span>
                     </div>
                 </div>
                 `;
@@ -555,6 +732,19 @@
             document.getElementById('m-score').innerText = `⬆ ${post.score}`;
             document.getElementById('m-body').innerText = post.body || "No text content.";
             document.getElementById('m-link').href = post.url;
+
+            // Populate Image if exists
+            const imageContainer = document.getElementById('m-image');
+            if (post.image_url && post.image_url !== 'None') {
+                imageContainer.innerHTML = `
+                    <div class="relative border-2 border-[#C9A959]/30 overflow-hidden" style="clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);">
+                        <img src="${post.image_url}" alt="${post.title}" class="w-full h-auto" onerror="this.parentElement.parentElement.style.display='none';" />
+                        <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%);"></div>
+                    </div>
+                `;
+            } else {
+                imageContainer.innerHTML = '';
+            }
 
             // Populate Comments
             const commentsContainer = document.getElementById('m-comments');
@@ -634,13 +824,29 @@
         window.addEventListener('scroll', checkScroll);
         checkScroll();
 
-        // Add sound effect simulation on card hover (visual feedback)
+        // Add ember sparks on card hover
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const cards = document.querySelectorAll('.card');
                 cards.forEach(card => {
-                    card.addEventListener('mouseenter', function() {
+                    card.addEventListener('mouseenter', function(e) {
                         this.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                        
+                        // Create ember sparks
+                        for (let i = 0; i < 8; i++) {
+                            const spark = document.createElement('div');
+                            spark.className = 'spark';
+                            const rect = this.getBoundingClientRect();
+                            spark.style.left = (e.clientX - rect.left) + 'px';
+                            spark.style.top = (e.clientY - rect.top) + 'px';
+                            spark.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+                            spark.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+                            spark.style.animation = `spark ${0.5 + Math.random() * 0.4}s ease-out forwards`;
+                            spark.style.animationDelay = (Math.random() * 0.15) + 's';
+                            this.appendChild(spark);
+                            
+                            setTimeout(() => spark.remove(), 1000);
+                        }
                     });
                 });
             }, 1000);
